@@ -46,6 +46,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       group: "www-data",
       mount_options: ["dmode=775,fmode=664"]
 
+  config.vm.provision :shell, inline: 'wget --no-check-certificate https://github.com/aglover/ubuntu-equip/raw/master/equip_java7_64.sh && bash equip_java7_64.sh'
+  
   config.vm.provision :salt do |salt|
 
     ## Minion config is set to ``file_client: local`` for masterless
