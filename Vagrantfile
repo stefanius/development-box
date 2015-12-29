@@ -22,6 +22,12 @@ end
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
+begin
+    load 'SyncedFolders'
+rescue LoadError
+    # ignore
+end
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.box = "trusty64"
@@ -36,17 +42,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.synced_folder "salt/roots/", "/srv/"
 
-  config.vm.synced_folder "~/PhpstormProjects/gastoudermarjolein/", "/home/vagrant/sites/gastoudermarjolein/public_html", :nfs => false,
-      owner: "vagrant",
-      group: "www-data",
-      mount_options: ["dmode=775,fmode=664"]
-
-  config.vm.synced_folder "~/PhpstormProjects/gastoudermarjolein/extra/vhosts", "/home/vagrant/sites/gastoudermarjolein/vhosts", :nfs => false,
-      owner: "vagrant",
-      group: "www-data",
-      mount_options: ["dmode=775,fmode=664"]
-
-  config.vm.provision :shell, inline: 'wget --no-check-certificate https://github.com/aglover/ubuntu-equip/raw/master/equip_java7_64.sh && bash equip_java7_64.sh'
+ # config.vm.provision :shell, inline: 'wget --no-check-certificate https://github.com/aglover/ubuntu-equip/raw/master/equip_java7_64.sh && bash equip_java7_64.sh'
   
   config.vm.provision :salt do |salt|
 
@@ -55,21 +51,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     salt.colorize = true
 
-        salt.pillar({
-          "mysql" => {
-            "server" => {
-                "root_password" => "password",
-                "user" => "mysql",
-                "mysqld" => {
-                    "bind-address" => "127.0.0.1",
-                    "port" => "3309"
-                }
-            }
-          }
-        })
-
-
-    salt.verbose = true
+    salt.verbose = false
     salt.log_level = "all"
     salt.run_highstate = true
   end
